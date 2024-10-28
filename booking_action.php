@@ -18,14 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $driver = $driverResult->fetch_assoc();
             $driver_id = $driver['D_id'];
 
-            // Use the CalculateFare function to get the cost
-            $fareQuery = "SELECT CalculateFare(?) AS Cost";
-            $fareStmt = $conn->prepare($fareQuery);
-            $fareStmt->bind_param("d", $distance);
-            $fareStmt->execute();
-            $fareResult = $fareStmt->get_result();
-            $cost = $fareResult->fetch_assoc()['Cost'];
-
             // Get the current time for the booking
             $currentTime = date('Y-m-d H:i:s');
 
@@ -34,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("iisssd", $c_id, $driver_id, $pickUp, $dropOff, $currentTime, $distance);
             
             if ($stmt->execute()) {
+                // Store booking ID in session for payment
+                $_SESSION['booking_id'] = $stmt->insert_id;
+                $_SESSION['distance'] = $distance;
+
                 // Update the driver's status to 'Not Available'
                 $updateDriverQuery = "UPDATE Driver SET Status = 'Not Available' WHERE D_id = ?";
                 $updateStmt = $conn->prepare($updateDriverQuery);
@@ -41,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $updateStmt->execute();
 
                 echo "Booking successful! Driver ID $driver_id has been allocated to your ride.";
+                echo "<p>Booking ID: " . $_SESSION['booking_id'] . "</p>";
+                echo "<form action='payment.php' method='get'>
+                        <input type='hidden' name='distance' value='$distance'>
+                        <button type='submit'>Pay Now</button>
+                      </form>";
             } else {
                 echo "Error: " . $stmt->error;
             }
@@ -52,27 +53,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 }
-
-if ($stmt->execute()) {
-    // Update the driver's status to 'Not Available'
-    $updateDriverQuery = "UPDATE Driver SET Status = 'Not Available' WHERE D_id = ?";
-    $updateStmt = $conn->prepare($updateDriverQuery);
-    $updateStmt->bind_param("i", $driver_id);
-    $updateStmt->execute();
-
-    // Store booking ID in session for payment
-    $_SESSION['booking_id'] = $stmt->insert_id;
-    $_SESSION['distance'] = $distance;
-
-    echo "Booking successful! Driver ID $driver_id has been allocated to your ride.";
-    echo "<form action='payment.php' method='get'>
-            <input type='hidden' name='distance' value='$distance'>
-            <button type='submit'>Pay Now</button>
-          </form>";
-} else {
-    echo "Error: " . $stmt->error;
-}
-
-
-
 ?>
