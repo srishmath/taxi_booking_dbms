@@ -52,4 +52,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 }
+
+if ($stmt->execute()) {
+    // Update the driver's status to 'Not Available'
+    $updateDriverQuery = "UPDATE Driver SET Status = 'Not Available' WHERE D_id = ?";
+    $updateStmt = $conn->prepare($updateDriverQuery);
+    $updateStmt->bind_param("i", $driver_id);
+    $updateStmt->execute();
+
+    // Store booking ID in session for payment
+    $_SESSION['booking_id'] = $stmt->insert_id;
+    $_SESSION['distance'] = $distance;
+
+    echo "Booking successful! Driver ID $driver_id has been allocated to your ride.";
+    echo "<form action='payment.php' method='get'>
+            <input type='hidden' name='distance' value='$distance'>
+            <button type='submit'>Pay Now</button>
+          </form>";
+} else {
+    echo "Error: " . $stmt->error;
+}
+
+
+
 ?>
