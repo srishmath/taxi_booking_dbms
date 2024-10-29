@@ -1,3 +1,0 @@
-<form action="view_bookings.php" method="get">
-    <button type="submit">View My Bookings</button>
-</form>
