@@ -62,7 +62,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
                     <td>{$row['Driver_Rating']}</td>
                     <td>{$row['Car_Type']}</td>";
             
-            if ($row['Booking_Status'] === 'Pending') {
+            if ($row['Booking_Status'] === 'Booked') {
                 echo "<td>
                         <form action='payment.php' method='get'>
                             <input type='hidden' name='booking_id' value='{$row['B_id']}'>
