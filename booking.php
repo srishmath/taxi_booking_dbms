@@ -30,6 +30,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             <input type="text" id="dropOff" name="dropOff" required>
             <button type="submit">Book Now</button>
         </form>
+        <form action="view_bookings.php" method="get">
+            <button type="submit">View My Bookings</button>
+        </form>
     </div>
 </body>
 </html>
