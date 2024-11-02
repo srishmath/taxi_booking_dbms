@@ -11,27 +11,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $number = $_POST['Number'];
         $password = $_POST['Password'];
 
-        // Prepare and execute SQL query
-        $stmt = $conn->prepare("SELECT * FROM Customer WHERE Number = ? AND Password = ?");
-        $stmt->bind_param("ss", $number, $password);
+        // Check if the username (phone number) exists
+        $stmt = $conn->prepare("SELECT * FROM Customer WHERE Number = ?");
+        $stmt->bind_param("s", $number);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Check if user exists
         if ($result->num_rows > 0) {
-            // Fetch the customer data
+            // If username exists, check the password
             $customer = $result->fetch_assoc();
-
-            $_SESSION['loggedin'] = true; // Set session variable
-            $_SESSION['c_id'] = $customer['C_id']; // Store customer ID in session
-            
-            header("location: booking.php"); // Redirect to booking page
-            exit;
+            if ($customer['Password'] === $password) {
+                // Password is correct, log the user in
+                $_SESSION['loggedin'] = true;
+                $_SESSION['c_id'] = $customer['C_id'];
+                header("location: booking.php");
+                exit;
+            } else {
+                // Incorrect password
+                $_SESSION['error'] = "Incorrect password.";
+                header("location: login.php");
+                exit;
+            }
         } else {
-            echo "Invalid login credentials.";
+            // Username does not exist
+            $_SESSION['error'] = "Phone Number does not exist.";
+            header("location: login.php");
+            exit;
         }
     } else {
-        echo "Number or Password not set.";
+        $_SESSION['error'] = "Number or Password not set.";
+        header("location: login.php");
+        exit;
     }
 }
 ?>

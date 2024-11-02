@@ -35,7 +35,59 @@ if (isset($_SESSION['booking_id']) && isset($_SESSION['distance'])) {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Payment Summary</title>
-            <link rel="stylesheet" type="text/css" href="style.css">
+            <style>
+                /* CSS Styling */
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    margin: 0;
+                }
+
+                .container {
+                    width: 90%;
+                    max-width: 500px;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    text-align: center;
+                    box-sizing: border-box;
+                }
+
+                h1 {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                    color: #333;
+                }
+
+                p {
+                    font-size: 18px;
+                    color: #555;
+                    margin: 10px 0;
+                }
+
+                form {
+                    margin-top: 20px;
+                }
+
+                button {
+                    background-color: #5cb85c;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                button:hover {
+                    background-color: #4cae4c;
+                }
+            </style>
         </head>
         <body>
             <div class="container">
